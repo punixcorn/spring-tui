@@ -1,0 +1,23 @@
+[package]
+name = "spring-tui"
+version = "0.0.1"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.100"
+thiserror = "2.0.18"
+clap = { version = "4.5.56", features = ["derive"] }
+tokio = { version = "1.49.0", features = ["rt-multi-thread", "macros"] }
+reqwest = { version = "0.13.1", features = ["json"] }
+ratatui = { version = "0.30.0", optional = true }
+crossterm = { version = "0.29.0", optional = true }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+zip = "7.2.0"      # keep only if downloading/extracting
+dirs = "6.0.0"     # only if you store defaults
+serde_yaml = "0.9"
+toml = "0.9.11"
+
+[features]
+default  = ["tui"]
+tui = ["dep:ratatui","dep:crossterm"]
