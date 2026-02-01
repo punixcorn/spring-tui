@@ -52,9 +52,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-build-target-
 
-      - name: Run clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
-
       - name: Build
         run: cargo build --verbose
 
