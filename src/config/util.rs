@@ -1,6 +1,5 @@
 use serde::de::DeserializeOwned;
 use std::fs;
-use std::path::Path;
 use std::path::PathBuf;
 use crate::types::config::{ConfigMetadata, FileType};
 
@@ -13,10 +12,6 @@ pub fn parse_config<T: DeserializeOwned>(path: &str) -> anyhow::Result<T> {
         FileType::Json => Ok(serde_json::from_str(&content)?),
         FileType::Toml => Ok(toml::from_str(&content)?),
     }
-}
-
-pub fn read_file(path: String) -> Option<String> {
-    fs::read_to_string(path).ok()
 }
 
 pub fn get_application_config_path() -> Option<String> {

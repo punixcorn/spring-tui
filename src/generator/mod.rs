@@ -34,8 +34,9 @@
         },
 */
 
+
 use crate::types::generic::SprintInitConfig;
-use crate::api;
+use crate::{api, types};
 
 pub fn download_url(config: &SprintInitConfig, base_url: &str) -> String {
     let mut url = base_url.to_string();
@@ -57,7 +58,7 @@ pub fn download_url(config: &SprintInitConfig, base_url: &str) -> String {
     url
 }
 
-pub async fn generate_project(config: &SprintInitConfig) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn generate_project(config: &SprintInitConfig, extract_project: bool) -> Result<(), Box<dyn std::error::Error>> {
     // Get capabilities from API
     let capabilities = api::get_capabilities().await?;
     
@@ -72,7 +73,7 @@ pub async fn generate_project(config: &SprintInitConfig) -> Result<(), Box<dyn s
         .ok_or("Invalid URL format")?;
 
     let download_link = download_url(config, base_url);
-    println!("Download URL: {}", download_link);
+    // println!("Download URL: {}", download_link);
 
     // Download the project
     let client = reqwest::Client::new();
@@ -84,16 +85,55 @@ pub async fn generate_project(config: &SprintInitConfig) -> Result<(), Box<dyn s
         // Save to file
         let file_path = format!("{}.zip", config.artifact_id);
         std::fs::write(&file_path, bytes)?;
-        println!("Project downloaded to: {}", file_path);
+        // println!("Project downloaded to: {}", file_path);
         
         // Extract the zip
-        let file = std::fs::File::open(&file_path)?;
-        let mut archive = zip::ZipArchive::new(file)?;
-        archive.extract(".")?;
-        println!("Project extracted successfully!");
+        if extract_project {
+            let file = std::fs::File::open(&file_path)?;
+            let mut archive = zip::ZipArchive::new(file)?;
+            archive.extract(".")?;
+            println!("Project extracted successfully!");
+        }
         
         Ok(())
     } else {
-        Err(format!("Download failed with status: {}", response.status()).into())
+        let error_text = response.text().await.unwrap_or_default();
+        let error_response: Result<types::generic::ErrorResponse, _> = serde_json::from_str(&error_text);
+        if let Ok(err) = error_response {
+            Err(format!("Download failed: {}",err.message).into())
+        } else {  
+            Err(format!("Download failed: {}", error_text).into())
+        }
     }
+}
+
+pub fn generate_project_config_file(
+    config: &SprintInitConfig,
+    extension: types::config::FileType,
+    custom_filename: Option<String>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let ext_str = match extension {
+        types::config::FileType::Yaml => "yaml",
+        types::config::FileType::Json => "json",
+        types::config::FileType::Toml => "toml",
+    };
+
+    let filename = if let Some(name) = custom_filename {
+        if name.ends_with(&format!(".{}", ext_str)) {
+            name
+        } else {
+            format!("{}.{}", name, ext_str)
+        }
+    } else {
+        format!("config.{}", ext_str)
+    };
+
+    let content = match extension {
+        types::config::FileType::Yaml => serde_yaml::to_string(config)?,
+        types::config::FileType::Json => serde_json::to_string_pretty(config)?,
+        types::config::FileType::Toml => toml::to_string_pretty(config)?,
+    };
+
+    std::fs::write(filename, content)?;
+    Ok(())
 }

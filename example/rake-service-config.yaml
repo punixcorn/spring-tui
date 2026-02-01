@@ -1,0 +1,14 @@
+projectType: maven-project
+language: kotlin
+platformVersion: ""
+packaging: jar
+configurationFileFormat: properties
+javaVersion: 21
+groupId: org.turntabl
+artifactId: rake
+name: rakeservice
+description: Demo Rake Service for my garden Application
+packageName: org.turntabl.rake
+dependencies: security,web
+bootVersion: 3.5.10
+version: 0.0.1-SNAPSHOT

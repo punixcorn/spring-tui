@@ -3,6 +3,7 @@ use std::collections::HashMap;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(dead_code)]
 pub struct InitializrDependencies {
     pub boot_version: String,
     pub dependencies: HashMap<String, Dependency>,
@@ -10,11 +11,12 @@ pub struct InitializrDependencies {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[allow(dead_code)]
 pub struct Dependency {
-    group_id: String,
-    artifact_id: String,
-    scope: String,
-    bom: Option<String>,
+    pub group_id: String,
+    pub artifact_id: String,
+    pub scope: String,
+    pub bom: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -37,12 +39,14 @@ pub struct InitializrCapabilities {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct Link {
     pub href: String,
     pub templated: Option<bool>,
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct CapabilityGroup {
     #[serde(rename = "type")]
     pub capability_type: String,
@@ -51,6 +55,7 @@ pub struct CapabilityGroup {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct CapabilityValue {
     pub id: String,
     pub name: String,
@@ -60,6 +65,7 @@ pub struct CapabilityValue {
 }
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 pub struct TextCapability {
     #[serde(rename = "type")]
     pub capability_type: String,

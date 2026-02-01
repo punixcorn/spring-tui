@@ -1,7 +1,7 @@
 
 use serde::{Serialize,Deserialize}; 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize,Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct SprintInitConfig {
     /// gradle-kotline, gradle-groovy , gradle-mavn
@@ -32,4 +32,15 @@ pub struct SprintInitConfig {
     pub boot_version: String,
     /// version : 0.0.1-SNAPSHOT
     pub version: String,
+}
+
+
+#[derive(Serialize, Deserialize,Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct ErrorResponse {
+    pub timestamp: String,
+    pub status: i32,
+    pub error: String,
+    pub message: String,
+    pub path: String,
 }

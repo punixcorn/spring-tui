@@ -21,3 +21,7 @@ toml = "0.9.11"
 [features]
 default  = ["tui"]
 tui = ["dep:ratatui","dep:crossterm"]
+
+[target.aarch64-apple-darwin]
+linker = "aarch64-apple-darwin21.1-clang"
+ar = "aarch64-apple-darwin21.1-ar"
