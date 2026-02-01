@@ -1,0 +1,11 @@
+HELP.md
+.gradle
+build
+.vscode/
+backup
+.history/
+*.code-workspace
+dev.json 
+ReadMe.md
+target
+bins
