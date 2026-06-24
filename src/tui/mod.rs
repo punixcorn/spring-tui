@@ -4,7 +4,7 @@ use crate::types::api::{InitializrCapabilities, InitializrDependencies};
 use crate::types::generic::SprintInitConfig;
 use crate::types::config::FileType;
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
@@ -105,27 +105,27 @@ impl App {
             group_id: capabilities
                 .group_id
                 .as_ref()
-                .map(|g| g.default.clone())
+                .and_then(|g| g.default.clone())
                 .unwrap_or_else(|| "com.example".to_string()),
             artifact_id: capabilities
                 .artifact_id
                 .as_ref()
-                .map(|a| a.default.clone())
+                .and_then(|a| a.default.clone())
                 .unwrap_or_else(|| "demo".to_string()),
             name: capabilities
                 .name
                 .as_ref()
-                .map(|n| n.default.clone())
+                .and_then(|n| n.default.clone())
                 .unwrap_or_else(|| "demo".to_string()),
             description: capabilities
                 .description
                 .as_ref()
-                .map(|d| d.default.clone())
+                .and_then(|d| d.default.clone())
                 .unwrap_or_else(|| "Demo project for Spring Boot".to_string()),
             package_name: capabilities
                 .package_name
                 .as_ref()
-                .map(|p| p.default.clone())
+                .and_then(|p| p.default.clone())
                 .unwrap_or_else(|| "com.example.demo".to_string()),
             dependencies: "".to_string(),
             boot_version: capabilities
@@ -136,7 +136,7 @@ impl App {
             version: capabilities
                 .version
                 .as_ref()
-                .map(|v| v.default.clone())
+                .and_then(|v| v.default.clone())
                 .unwrap_or_else(|| "0.0.1-SNAPSHOT".to_string()),
         };
 
@@ -157,7 +157,7 @@ impl App {
             input_buffer: String::new(),
             deps_search: String::new(),
             selected_deps: BTreeSet::new(),
-            status_message: "<Tab> Switch Pane  <> Navigate  <Enter> Select/Edit  <Shift+c> Config Menu".to_string(),
+            status_message: "<Tab> Switch Pane  <> Navigate  <Enter> Select/Edit  <Shift+c> Config Menu  <Ctrl+q> Exit".to_string(),
             show_popup: false,
             show_export_popup: false,
             export_filename: "config".to_string(),
@@ -951,7 +951,7 @@ where
                 }
             } else {
                 match key.code {
-                    KeyCode::Char('q') | KeyCode::Char('Q') => return Ok(()),
+                    KeyCode::Char('q') | KeyCode::Char('Q') if key.modifiers.contains(KeyModifiers::CONTROL) => return Ok(()),
                     KeyCode::Char('C') => app.show_config_popup = true,
                     KeyCode::Tab => app.toggle_pane(),
                     KeyCode::Down | KeyCode::Char('j') => {

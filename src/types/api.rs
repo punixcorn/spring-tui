@@ -69,5 +69,29 @@ pub struct CapabilityValue {
 pub struct TextCapability {
     #[serde(rename = "type")]
     pub capability_type: String,
-    pub default: String,
+    pub default: Option<String>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::InitializrCapabilities;
+
+    #[test]
+    fn capabilities_accept_text_fields_without_defaults() {
+        let json = r#"{
+            "_links": {
+                "maven-project": {
+                    "href": "https://start.spring.io/starter.zip?type=maven-project",
+                    "templated": true
+                }
+            },
+            "name": { "type": "text" },
+            "description": { "type": "text" }
+        }"#;
+
+        let capabilities: InitializrCapabilities = serde_json::from_str(json).unwrap();
+
+        assert_eq!(capabilities.name.unwrap().default, None);
+        assert_eq!(capabilities.description.unwrap().default, None);
+    }
 }
